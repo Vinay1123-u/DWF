@@ -1,0 +1,27 @@
+# Environment files
+.env
+*.env
+
+# Database files
+*.db
+
+# Build output
+build/
+CMakeFiles/
+cmake-build-debug/
+cmake-build-release/
+
+# Qt / IDE user files
+*.user
+*.user.*
+*.pro.user
+*.autosave
+
+# Misc
+*.log
+aqtinstall.log
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc
+.vscode/
