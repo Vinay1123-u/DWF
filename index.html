@@ -1,0 +1,3403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LexiFind — Find the meaning. Discover the word.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070a12;
+      --bg-gradient: radial-gradient(circle at 50% 0%, #151f38 0%, #070a12 70%);
+      --surface: #0d1424;
+      --surface-card: #10192d;
+      --surface-elevated: #15223c;
+      --surface-border: rgba(255, 215, 0, 0.12);
+      --surface-border-subtle: rgba(255, 255, 255, 0.07);
+      --text: #ffffff;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --gold: #f59e0b;
+      --gold-light: #fbbf24;
+      --gold-glow: rgba(245, 158, 11, 0.25);
+      --gold-bg: rgba(245, 158, 11, 0.15);
+      --emerald: #10b981;
+      --emerald-bg: rgba(16, 185, 129, 0.12);
+      --rose: #f43f5e;
+      --rose-bg: rgba(244, 63, 94, 0.12);
+      --indigo: #6366f1;
+      --indigo-bg: rgba(99, 102, 241, 0.12);
+      --card-radius: 18px;
+      --chip-bg: rgba(255, 255, 255, 0.04);
+      --chip-border: rgba(255, 255, 255, 0.08);
+      --chip-hover: rgba(245, 158, 11, 0.15);
+    }
+
+    body.light {
+      --bg: #f5f7fb;
+      --bg-gradient: radial-gradient(circle at 50% 0%, #e8edf7 0%, #f5f7fb 70%);
+      --surface: #ffffff;
+      --surface-card: #ffffff;
+      --surface-elevated: #f1f5f9;
+      --surface-border: rgba(217, 119, 6, 0.25);
+      --surface-border-subtle: rgba(0, 0, 0, 0.08);
+      --text: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --gold: #d97706;
+      --gold-light: #f59e0b;
+      --gold-glow: rgba(217, 119, 6, 0.2);
+      --gold-bg: rgba(245, 158, 11, 0.18);
+      --emerald: #059669;
+      --emerald-bg: rgba(5, 150, 105, 0.1);
+      --rose: #e11d48;
+      --rose-bg: rgba(225, 29, 72, 0.1);
+      --indigo: #4f46e5;
+      --indigo-bg: rgba(79, 70, 229, 0.08);
+      --chip-bg: #e2e8f0;
+      --chip-border: #cbd5e1;
+      --chip-hover: #fef3c7;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      background-image: var(--bg-gradient);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    /* Top Navigation Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 36px;
+      border-bottom: 1px solid var(--surface-border-subtle);
+      background: rgba(7, 10, 18, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    body.light header {
+      background: rgba(255, 255, 255, 0.85);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .brand-logo-icon {
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.5));
+    }
+
+    .brand-text h1 {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+    }
+    .brand-text h1 span {
+      color: var(--gold-light);
+    }
+
+    .brand-text p {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      letter-spacing: 0.2px;
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .nav-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-btn.active {
+      background: var(--gold);
+      color: #070a12;
+      font-weight: 700;
+      box-shadow: 0 4px 14px var(--gold-glow);
+    }
+
+    body.light .nav-btn.active {
+      background: var(--gold);
+      color: #ffffff;
+    }
+
+    /* Theme Switch Pill */
+    .theme-switch {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--surface-border-subtle);
+      border-radius: 30px;
+      padding: 4px 6px;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    body.light .theme-switch {
+      background: #e2e8f0;
+    }
+
+    .theme-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+
+    .theme-switch .active-theme {
+      background: var(--gold);
+      color: #000;
+      box-shadow: 0 2px 8px var(--gold-glow);
+    }
+
+    .profile-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--surface-border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .profile-btn:hover {
+      color: var(--gold-light);
+      border-color: var(--gold);
+      background: var(--gold-bg);
+    }
+
+    /* Main Container Layout */
+    .app-layout {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr) 320px;
+      gap: 24px;
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 24px 32px 40px;
+      flex: 1;
+      width: 100%;
+      align-items: start;
+    }
+
+    /* Left Sidebar */
+    .left-sidebar {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: calc(100vh - 110px);
+      position: sticky;
+      top: 86px;
+      overflow-y: auto;
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 18px;
+      border-radius: 14px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+
+    .sidebar-item:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .sidebar-item.active {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(245, 158, 11, 0.06));
+      color: var(--gold-light);
+      border-color: rgba(245, 158, 11, 0.35);
+      font-weight: 700;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar-quote-box {
+      margin-top: auto;
+      padding: 16px 12px;
+    }
+
+    .sidebar-quote {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    .sidebar-quote-line {
+      width: 42px;
+      height: 3px;
+      background: var(--gold);
+      border-radius: 4px;
+      box-shadow: 0 0 10px var(--gold-glow);
+    }
+
+    /* Antique Books Ambient Illustration Container */
+    .antique-books-art {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-top: 14px;
+      background: linear-gradient(180deg, rgba(16, 25, 45, 0) 0%, rgba(13, 20, 36, 0.95) 80%);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .book-stack-svg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.35));
+    }
+
+    /* Center Main Feed */
+    .center-content {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    /* Hero Search Header Area */
+    .hero-section {
+      position: relative;
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border-subtle);
+      border-radius: var(--card-radius);
+      padding: 30px 36px 26px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .hero-art-sprout {
+      position: absolute;
+      right: 24px;
+      top: 10px;
+      width: 220px;
+      height: 160px;
+      pointer-events: none;
+      opacity: 0.95;
+      filter: drop-shadow(0 0 25px rgba(245, 158, 11, 0.4));
+    }
+
+    .hero-title {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+
+    .hero-title .gold-text {
+      color: var(--gold-light);
+      background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 22px;
+      font-weight: 500;
+    }
+
+    /* Search Input Bar */
+    .search-bar-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: rgba(7, 10, 18, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 40px;
+      padding: 6px 8px 6px 20px;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+      transition: all 0.25s ease;
+      max-width: 540px;
+    }
+
+    body.light .search-bar-wrapper {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .search-bar-wrapper:focus-within {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px var(--gold-glow), 0 8px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .search-icon-left {
+      color: var(--text-muted);
+      margin-right: 12px;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      font-family: inherit;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .clear-search-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 6px;
+      margin-right: 4px;
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+    }
+    .clear-search-btn:hover {
+      color: var(--text);
+    }
+
+    .search-submit-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--gold);
+      border: none;
+      color: #070a12;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 10px var(--gold-glow);
+    }
+
+    .search-submit-btn:hover {
+      transform: scale(1.06);
+      background: var(--gold-light);
+    }
+
+    .voice-search-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--surface-border-subtle);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-left: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .voice-search-btn:hover {
+      color: var(--gold-light);
+      border-color: var(--gold);
+      background: var(--gold-bg);
+    }
+
+    .voice-search-btn.listening {
+      background: var(--rose-bg);
+      border-color: var(--rose);
+      color: var(--rose);
+      animation: pulseMic 1.2s infinite;
+    }
+
+    @keyframes pulseMic {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.5); }
+      70% { transform: scale(1.08); box-shadow: 0 0 0 10px rgba(244, 63, 94, 0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
+    }
+
+    /* Quick Try Chips */
+    .try-chips-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    .try-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-right: 2px;
+    }
+
+    .chip {
+      background: var(--chip-bg);
+      border: 1px solid var(--chip-border);
+      color: var(--text-secondary);
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chip:hover {
+      color: var(--gold-light);
+      background: var(--chip-hover);
+      border-color: rgba(245, 158, 11, 0.4);
+      transform: translateY(-1px);
+    }
+
+    /* Word Details Main Card */
+    .word-result-card {
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border-subtle);
+      border-radius: var(--card-radius);
+      padding: 32px 36px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+      position: relative;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .word-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .word-title-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .main-word-heading {
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: var(--text);
+    }
+
+    .audio-speaker-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      color: var(--gold-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .audio-speaker-btn:hover {
+      background: var(--gold);
+      color: #070a12;
+      transform: scale(1.08);
+      box-shadow: 0 0 12px var(--gold-glow);
+    }
+
+    .phonetic-text {
+      font-size: 16px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-bottom: 14px;
+      font-family: monospace, sans-serif;
+    }
+
+    .pos-badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 20px;
+      background: var(--gold);
+      color: #070a12;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: lowercase;
+      margin-bottom: 16px;
+    }
+
+    body.light .pos-badge {
+      background: #f59e0b;
+      color: #ffffff;
+    }
+
+    .favorite-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 30px;
+      background: transparent;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: var(--gold-light);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .favorite-toggle-btn:hover {
+      background: var(--gold-bg);
+      border-color: var(--gold);
+    }
+
+    .context-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 30px;
+      background: rgba(30, 58, 138, 0.2);
+      border: 1px solid rgba(96, 165, 250, 0.35);
+      color: #93c5fd;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .context-btn:hover {
+      background: rgba(30, 58, 138, 0.4);
+      border-color: #60a5fa;
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    body.light .context-btn {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      color: #2563eb;
+    }
+
+    .favorite-toggle-btn.is-favorited {
+      background: var(--gold);
+      color: #070a12;
+      font-weight: 700;
+    }
+
+    .primary-definition-text {
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text);
+      margin-bottom: 24px;
+      font-weight: 400;
+    }
+
+    /* 3-Column Feature Cards Grid */
+    .word-features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .feature-card {
+      background: var(--surface-elevated);
+      border: 1px solid var(--surface-border-subtle);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: all 0.2s;
+      cursor: default;
+      min-height: 120px;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .feature-card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .feature-card-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .feature-card-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: capitalize;
+    }
+
+    .title-meaning { color: var(--gold-light); }
+    .title-synonyms { color: var(--emerald); }
+    .title-antonyms { color: var(--rose); }
+
+    .feature-card-content {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 12px;
+      flex: 1;
+    }
+
+    .feature-tags-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .feature-mini-tag {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .feature-mini-tag:hover {
+      background: var(--gold-bg);
+      color: var(--gold-light);
+      border-color: var(--gold);
+      transform: scale(1.05);
+    }
+
+    .feature-card-arrow {
+      align-self: flex-end;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .empty-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* Example Sentence Banner */
+    .example-sentence-card {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(30, 27, 75, 0.3));
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    body.light .example-sentence-card {
+      background: #eef2ff;
+      border-color: #c7d2fe;
+    }
+
+    .example-card-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .example-icon-bubble {
+      color: var(--indigo);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .example-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #a5b4fc;
+      text-transform: capitalize;
+      margin-bottom: 2px;
+    }
+    body.light .example-label {
+      color: var(--indigo);
+    }
+
+    .example-text {
+      font-size: 14px;
+      color: var(--text);
+      font-style: italic;
+    }
+
+    .example-card-arrow {
+      color: #a5b4fc;
+      font-size: 16px;
+    }
+
+    /* Bottom Action Buttons Row */
+    .word-actions-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--surface-border-subtle);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .action-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    /* Right Sidebar Column */
+    .right-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: sticky;
+      top: 86px;
+      max-height: calc(100vh - 110px);
+      overflow-y: auto;
+    }
+
+    .sidebar-card {
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border-subtle);
+      border-radius: var(--card-radius);
+      padding: 20px 22px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .sidebar-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .sidebar-card-action {
+      background: transparent;
+      border: none;
+      color: var(--gold-light);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .sidebar-card-action:hover {
+      text-decoration: underline;
+    }
+
+    .word-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .word-list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .word-list-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      transform: translateX(3px);
+    }
+
+    .word-item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .word-item-arrow {
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    /* Word of the Day Atmospheric Card */
+    .wotd-card {
+      position: relative;
+      background: #0d1527;
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      border-radius: var(--card-radius);
+      padding: 24px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .wotd-bg-art {
+      position: absolute;
+      inset: 0;
+      opacity: 0.28;
+      pointer-events: none;
+      background-size: cover;
+      background-position: center bottom;
+    }
+
+    .wotd-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .wotd-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .wotd-word {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--gold-light);
+      margin-bottom: 4px;
+      letter-spacing: -0.5px;
+    }
+
+    .wotd-pos {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-bottom: 10px;
+    }
+
+    .wotd-def {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 16px;
+      padding-right: 40px;
+    }
+
+    .wotd-arrow-btn {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--gold);
+      border: none;
+      color: #070a12;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 10px var(--gold-glow);
+    }
+
+    .wotd-arrow-btn:hover {
+      transform: scale(1.1);
+      background: var(--gold-light);
+    }
+
+    /* Interactive Quiz Screen Container */
+    #quiz-section {
+      display: none;
+      flex-direction: column;
+      gap: 22px;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .quiz-card {
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border-subtle);
+      border-radius: var(--card-radius);
+      padding: 32px 36px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+    }
+
+    .quiz-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--surface-border-subtle);
+    }
+
+    .quiz-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: var(--gold-bg);
+      color: var(--gold-light);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .quiz-progress-text {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .quiz-question-prompt {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .quiz-options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .quiz-option-btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      border-radius: 14px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--surface-border-subtle);
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quiz-option-btn:hover:not(:disabled) {
+      border-color: var(--gold);
+      background: var(--gold-bg);
+      transform: translateX(4px);
+    }
+
+    .quiz-opt-letter {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gold-light);
+    }
+
+    .quiz-option-btn.correct {
+      background: var(--emerald-bg) !important;
+      border-color: var(--emerald) !important;
+      color: #6ee7b7 !important;
+    }
+
+    .quiz-option-btn.wrong {
+      background: var(--rose-bg) !important;
+      border-color: var(--rose) !important;
+      color: #fca5a5 !important;
+    }
+
+    .quiz-explanation-box {
+      display: none;
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* Modal dialogs */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-box {
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      border-radius: 24px;
+      padding: 32px;
+      max-width: 550px;
+      width: 100%;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+      animation: modalSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalSlide {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: #111a2e;
+      border: 1px solid var(--gold);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      animation: toastIn 0.3s ease forwards;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .app-layout {
+        grid-template-columns: 200px 1fr 290px;
+        gap: 18px;
+        padding: 20px 20px 40px;
+      }
+    }
+
+    @media (max-width: 1000px) {
+      .app-layout {
+        grid-template-columns: 1fr 270px;
+        gap: 16px;
+      }
+      .left-sidebar {
+        display: none;
+      }
+    }
+
+    @media (max-width: 800px) {
+      .app-layout {
+        grid-template-columns: 1fr;
+        padding: 16px;
+      }
+      .right-sidebar {
+        display: none;
+      }
+      .word-features-grid {
+        grid-template-columns: 1fr;
+      }
+      header {
+        padding: 12px 16px;
+      }
+    }
+
+    /* SerpApi Google Search Section */
+    .serp-hero-card {
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border-subtle);
+      border-radius: var(--card-radius);
+      padding: 24px 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    }
+    .serp-header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .serp-logo-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(66, 133, 244, 0.12);
+      border: 1px solid rgba(66, 133, 244, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .serp-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--emerald);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .serp-status-pill.offline {
+      background: rgba(245, 158, 11, 0.12);
+      border-color: rgba(245, 158, 11, 0.3);
+      color: var(--gold-light);
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 6px currentColor;
+    }
+    .serp-config-btn {
+      padding: 7px 14px;
+      border-radius: 10px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--surface-border-subtle);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .serp-config-btn:hover {
+      color: var(--text);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .serp-params-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+    .serp-param-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--surface-border-subtle);
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+    .serp-param-label {
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .serp-param-input, .serp-param-select {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 12px;
+      font-family: inherit;
+      outline: none;
+    }
+    .serp-param-input { width: 175px; }
+    .serp-spinner {
+      width: 38px;
+      height: 38px;
+      border: 3px solid rgba(66, 133, 244, 0.2);
+      border-top-color: #4285F4;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .serp-meta-info {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .serp-kg-card {
+      background: var(--surface-card);
+      border: 1px solid rgba(66, 133, 244, 0.25);
+      border-radius: var(--card-radius);
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    .serp-kg-header {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .serp-kg-img {
+      width: 110px;
+      height: 110px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 1px solid var(--surface-border-subtle);
+      flex-shrink: 0;
+    }
+    .serp-kg-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .serp-kg-type {
+      font-size: 13px;
+      color: #60a5fa;
+      font-weight: 600;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .serp-kg-desc {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      margin-bottom: 14px;
+    }
+    .serp-kg-attrs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--surface-border-subtle);
+    }
+    .serp-attr-item {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .serp-attr-item strong {
+      color: var(--text);
+    }
+    .serp-organic-card {
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border-subtle);
+      border-radius: 14px;
+      padding: 18px 22px;
+      transition: all 0.2s;
+    }
+    .serp-organic-card:hover {
+      border-color: rgba(66, 133, 244, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+    .serp-res-source {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .serp-res-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #60a5fa;
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+    body.light .serp-res-title {
+      color: #1d4ed8;
+    }
+    .serp-res-title:hover {
+      text-decoration: underline;
+    }
+    .serp-res-snippet {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+    .serp-sitelinks-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .serp-sitelink-chip {
+      font-size: 12px;
+      color: #93c5fd;
+      background: rgba(66, 133, 244, 0.08);
+      border: 1px solid rgba(66, 133, 244, 0.2);
+      padding: 4px 10px;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .serp-sitelink-chip:hover {
+      background: rgba(66, 133, 244, 0.2);
+      color: #ffffff;
+    }
+    .serp-paa-card {
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border-subtle);
+      border-radius: 14px;
+      padding: 20px;
+    }
+    .serp-paa-item {
+      border-bottom: 1px solid var(--surface-border-subtle);
+      padding: 12px 0;
+    }
+    .serp-paa-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .serp-paa-q {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .serp-paa-ans {
+      margin-top: 8px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      display: none;
+    }
+    .serp-paa-ans.open {
+      display: block;
+    }
+
+    /* =============================================
+       FULL-PAGE AUTH GATE (covers entire viewport)
+       ============================================= */
+    #auth-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 15% 20%, rgba(245,158,11,0.18) 0%, transparent 50%),
+        radial-gradient(ellipse at 85% 80%, rgba(99,102,241,0.14) 0%, transparent 50%),
+        #06090f;
+    }
+    .auth-gate-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.22;
+      pointer-events: none;
+      animation: gateBlob 14s ease-in-out infinite alternate;
+    }
+    .auth-gate-blob-1 { width:520px; height:520px; background:#f59e0b; top:-160px; left:-140px; }
+    .auth-gate-blob-2 { width:440px; height:440px; background:#6366f1; bottom:-120px; right:-120px; animation-duration:18s; }
+    .auth-gate-blob-3 { width:280px; height:280px; background:#10b981; top:50%; left:60%; opacity:0.13; animation-duration:10s; }
+    @keyframes gateBlob {
+      from { transform: translate(0,0) scale(1); }
+      to   { transform: translate(40px,30px) scale(1.12); }
+    }
+    .auth-gate-card {
+      position: relative;
+      z-index: 2;
+      width: 480px;
+      max-width: 94vw;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.11);
+      border-radius: 28px;
+      padding: 44px 42px 40px;
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      box-shadow: 0 36px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.1);
+      animation: gateCardIn 0.55s cubic-bezier(0.16,1,0.3,1) both;
+      color: #fff;
+    }
+    @keyframes gateCardIn {
+      from { opacity:0; transform: translateY(30px) scale(0.96); }
+      to   { opacity:1; transform: translateY(0) scale(1); }
+    }
+    .auth-gate-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 30px;
+    }
+    .auth-gate-logo {
+      width:50px; height:50px;
+      background: rgba(245,158,11,0.15);
+      border: 1px solid rgba(245,158,11,0.35);
+      border-radius: 15px;
+      display: flex; align-items: center; justify-content: center;
+      filter: drop-shadow(0 0 12px rgba(245,158,11,0.45));
+      flex-shrink: 0;
+    }
+    .auth-gate-brand-name {
+      font-size: 23px; font-weight: 800; letter-spacing: -0.5px; color:#fff;
+    }
+    .auth-gate-brand-name span { color:#fbbf24; }
+    .auth-gate-brand-tagline {
+      font-size: 11.5px; color: #94a3b8; font-weight: 500; margin-top: 2px;
+    }
+    .auth-gate-tabs {
+      display: flex;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 4px;
+      gap: 4px;
+      margin-bottom: 26px;
+    }
+    .auth-gate-tab {
+      flex:1; padding:10px; border:none; border-radius:10px;
+      background: transparent; color: #94a3b8;
+      font-weight:700; font-size:14px; cursor:pointer;
+      font-family: inherit; transition: all 0.2s;
+    }
+    .auth-gate-tab.active {
+      background: #f59e0b; color: #07090f;
+      box-shadow: 0 3px 10px rgba(245,158,11,0.4);
+    }
+    .auth-gate-subtitle {
+      font-size:13.5px; color:#94a3b8; margin-bottom:20px;
+    }
+    .auth-gate-field { margin-bottom:16px; }
+    .auth-gate-field label {
+      display:block; font-size:11.5px; font-weight:700;
+      color:#cbd5e1; margin-bottom:6px;
+      text-transform:uppercase; letter-spacing:0.6px;
+    }
+    .auth-gate-input {
+      width:100%; box-sizing:border-box;
+      padding:13px 16px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius:12px; color:#fff;
+      font-size:14px; font-family:inherit; outline:none;
+      transition: all 0.2s;
+    }
+    .auth-gate-input::placeholder { color:#475569; }
+    .auth-gate-input:focus {
+      border-color:#f59e0b;
+      background: rgba(255,255,255,0.1);
+      box-shadow: 0 0 0 3px rgba(245,158,11,0.22);
+    }
+    .auth-gate-error {
+      color:#f87171; font-size:13px; min-height:18px;
+      margin-bottom:10px; font-weight:500;
+    }
+    .auth-gate-btn {
+      width:100%; padding:14px;
+      background: linear-gradient(135deg,#f59e0b,#d97706);
+      border:none; border-radius:14px;
+      color:#07090f; font-size:15px; font-weight:800;
+      cursor:pointer; font-family:inherit;
+      transition: all 0.2s;
+      box-shadow: 0 8px 24px rgba(245,158,11,0.38);
+      margin-top:4px;
+    }
+    .auth-gate-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px rgba(245,158,11,0.55);
+      filter: brightness(1.08);
+    }
+    .auth-gate-btn:active { transform: scale(0.98); }
+    .auth-gate-divider {
+      text-align:center; font-size:11px;
+      color:#475569; margin:14px 0;
+    }
+    .auth-gate-demo-btn {
+      width:100%; padding:11px;
+      background: rgba(245,158,11,0.12);
+      border: 1px solid rgba(245,158,11,0.35);
+      border-radius:12px;
+      color:#fbbf24; font-size:13px; font-weight:700;
+      cursor:pointer; font-family:inherit;
+      transition: all 0.2s;
+    }
+    .auth-gate-demo-btn:hover {
+      background: rgba(245,158,11,0.2);
+      border-color: rgba(245,158,11,0.6);
+    }
+
+    /* Auth modal & Login/Logout UI */
+    .auth-modal-content {
+      background: var(--surface);
+      border: 1px solid var(--surface-border-subtle);
+      border-radius: 20px;
+      padding: 32px;
+      max-width: 420px;
+      width: 90%;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+    .auth-tab-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      background: var(--surface-elevated);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--surface-border-subtle);
+    }
+    .auth-tab-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .auth-tab-btn.active {
+      background: var(--gold);
+      color: #070A12;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+    }
+    .auth-form-group {
+      margin-bottom: 16px;
+      text-align: left;
+    }
+    .auth-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+    .auth-input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 14px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--surface-border-subtle);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .auth-input:focus {
+      border-color: var(--gold);
+    }
+    .auth-error {
+      color: var(--rose);
+      font-size: 13px;
+      margin-bottom: 12px;
+      min-height: 18px;
+    }
+    .nav-auth-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--gold);
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--gold-light);
+      transition: all 0.2s;
+    }
+    .nav-auth-btn:hover {
+      background: var(--gold);
+      color: #070A12;
+    }
+    .nav-logout-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      background: rgba(239, 68, 68, 0.1);
+      color: #f87171;
+      transition: all 0.2s;
+    }
+    .nav-logout-btn:hover {
+      background: #ef4444;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =============================================
+       FULL-PAGE AUTH GATE
+       Covers everything until the user logs in.
+       ============================================= -->
+  <div id="auth-gate">
+    <div class="auth-gate-blob auth-gate-blob-1"></div>
+    <div class="auth-gate-blob auth-gate-blob-2"></div>
+    <div class="auth-gate-blob auth-gate-blob-3"></div>
+    <div class="auth-gate-card">
+
+      <!-- Brand Header -->
+      <div class="auth-gate-brand">
+        <div class="auth-gate-logo">
+          <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
+            <path d="M6 36C12 36 18 33 24 30C30 33 36 36 42 36V12C36 12 30 9 24 6C18 9 12 12 6 12V36Z" fill="#F59E0B" fill-opacity="0.2"/>
+            <path d="M24 6V30M6 12C12 12 18 9 24 6C30 9 36 12 42 12V36C36 36 30 33 24 30C18 33 12 36 6 36V12Z" stroke="#FBBF24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="24" cy="5" r="2.5" fill="#FBBF24"/>
+          </svg>
+        </div>
+        <div>
+          <div class="auth-gate-brand-name">Lexi<span>Find</span></div>
+          <div class="auth-gate-brand-tagline">Find the meaning. Discover the word.</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="auth-gate-tabs">
+        <button class="auth-gate-tab active" id="gate-tab-login" onclick="gateTab('login')">Sign In</button>
+        <button class="auth-gate-tab" id="gate-tab-reg" onclick="gateTab('register')">Create Account</button>
+      </div>
+
+      <!-- Login Panel -->
+      <div id="gate-login-panel">
+        <h3 style="font-size:20px;font-weight:800;color:#fff;margin-bottom:4px;">Welcome Back &#128075;</h3>
+        <p class="auth-gate-subtitle">Sign in to access your dictionary &amp; learning tools.</p>
+        <form onsubmit="event.preventDefault(); gateLogin();">
+          <div class="auth-gate-field">
+            <label>Email or Username</label>
+            <input type="text" id="gate-identifier" class="auth-gate-input" placeholder="user@example.com or username" autocomplete="username"/>
+          </div>
+          <div class="auth-gate-field">
+            <label>Password</label>
+            <div style="position:relative;">
+              <input type="password" id="gate-password" class="auth-gate-input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="current-password" style="padding-right:44px;"/>
+              <button type="button" onclick="toggleGatePassword('gate-password',this)" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:#64748b;cursor:pointer;font-size:15px;" title="Show/Hide password">&#128065;</button>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:#94a3b8;cursor:pointer;">
+              <input type="checkbox" id="gate-remember" style="accent-color:#f59e0b;width:14px;height:14px;"/> Remember me
+            </label>
+            <button type="button" onclick="showToast('Password reset coming soon!')" style="background:none;border:none;color:#fbbf24;font-size:12px;font-weight:600;cursor:pointer;">Forgot Password?</button>
+          </div>
+          <div class="auth-gate-error" id="gate-login-err"></div>
+          <button type="submit" class="auth-gate-btn" id="gate-login-btn">LOGIN &#8594;</button>
+        </form>
+        <div class="auth-gate-divider">&mdash; OR &mdash;</div>
+        <button class="auth-gate-demo-btn" onclick="gateDemoLogin()">&#9889; One-Click Demo Login (Vinay)</button>
+        <p style="text-align:center;font-size:12px;color:#64748b;margin-top:14px;">Don't have an account? <button type="button" onclick="gateTab('register')" style="background:none;border:none;color:#fbbf24;font-weight:700;cursor:pointer;font-size:12px;">Sign Up</button></p>
+      </div>
+
+      <!-- Register Panel -->
+      <div id="gate-reg-panel" style="display:none;">
+        <h3 style="font-size:20px;font-weight:800;color:#fff;margin-bottom:4px;">Create Account &#10024;</h3>
+        <p class="auth-gate-subtitle">Join LexiFind and start building your vocabulary!</p>
+        <form onsubmit="event.preventDefault(); gateRegister();">
+          <div class="auth-gate-field">
+            <label>Username</label>
+            <input type="text" id="gate-username" class="auth-gate-input" placeholder="wordmaster" autocomplete="username"/>
+          </div>
+          <div class="auth-gate-field">
+            <label>Email Address</label>
+            <input type="email" id="gate-email" class="auth-gate-input" placeholder="user@example.com" autocomplete="email"/>
+          </div>
+          <div class="auth-gate-field">
+            <label>Password</label>
+            <div style="position:relative;">
+              <input type="password" id="gate-reg-password" class="auth-gate-input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="new-password" style="padding-right:44px;"/>
+              <button type="button" onclick="toggleGatePassword('gate-reg-password',this)" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:#64748b;cursor:pointer;font-size:15px;">&#128065;</button>
+            </div>
+          </div>
+          <div class="auth-gate-error" id="gate-reg-err"></div>
+          <button type="submit" class="auth-gate-btn" id="gate-reg-btn">CREATE ACCOUNT &#10024;</button>
+        </form>
+        <p style="text-align:center;font-size:12px;color:#64748b;margin-top:14px;">Already have an account? <button type="button" onclick="gateTab('login')" style="background:none;border:none;color:#fbbf24;font-weight:700;cursor:pointer;font-size:12px;">Sign In</button></p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Top Header Navigation Bar -->
+  <header>
+    <a class="brand" href="/" onclick="event.preventDefault(); showDictionaryView();">
+      <div class="brand-logo-icon">
+        <svg width="40" height="40" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 36C12 36 18 33 24 30C30 33 36 36 42 36V12C36 12 30 9 24 6C18 9 12 12 6 12V36Z" fill="#F59E0B" fill-opacity="0.2"/>
+          <path d="M24 6V30M6 12C12 12 18 9 24 6C30 9 36 12 42 12V36C36 36 30 33 24 30C18 33 12 36 6 36V12Z" stroke="#FBBF24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="24" cy="5" r="3" fill="#FBBF24"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>Lexi<span>Find</span></h1>
+        <p>Find the meaning. Discover the word.</p>
+      </div>
+    </a>
+
+    <div class="header-nav">
+      <button class="nav-btn active" id="nav-home-btn" onclick="showDictionaryView()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        Home
+      </button>
+
+      <button class="nav-btn" id="nav-quiz-btn" onclick="showQuizView()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        Quiz
+      </button>
+      <button class="nav-btn" id="nav-history-btn" onclick="openHistoryModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        History
+      </button>
+      <button class="nav-btn" id="nav-favorites-btn" onclick="openFavoritesModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Favorites
+      </button>
+
+      <!-- Theme Toggle -->
+      <div class="theme-switch" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Dark / Light Theme">
+        <div class="theme-icon" id="sun-icon">☀️</div>
+        <div class="theme-icon active-theme" id="moon-icon">🌙</div>
+      </div>
+
+      <!-- User Profile Avatar -->
+      <button class="profile-btn" onclick="openProfileModal()" title="Account & Preferences">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main 3-Column Layout -->
+  <div class="app-layout">
+
+    <!-- Left Sidebar -->
+    <aside class="left-sidebar">
+      <nav class="sidebar-menu">
+        <div class="sidebar-item active" id="side-home" onclick="showDictionaryView()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+          Home
+        </div>
+
+        <div class="sidebar-item" id="side-quiz" onclick="showQuizView()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          Quiz Studio
+        </div>
+        <div class="sidebar-item" id="side-history" onclick="openHistoryModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          History
+        </div>
+        <div class="sidebar-item" id="side-favorites" onclick="openFavoritesModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Favorites
+        </div>
+      </nav>
+
+      <div class="sidebar-quote-box">
+        <p class="sidebar-quote">“A new word<br>is a new world.”</p>
+        <div class="sidebar-quote-line"></div>
+      </div>
+
+      <!-- Antique Stack of Books Atmospheric Illustration -->
+      <div class="antique-books-art">
+        <svg class="book-stack-svg" viewBox="0 0 220 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="lampGlow" cx="50%" cy="30%" r="60%">
+              <stop offset="0%" stop-color="#F59E0B" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#070A12" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="book1" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#1E1610"/>
+              <stop offset="25%" stop-color="#3A2718"/>
+              <stop offset="70%" stop-color="#4A3320"/>
+              <stop offset="100%" stop-color="#1A130C"/>
+            </linearGradient>
+            <linearGradient id="book2" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#0E1726"/>
+              <stop offset="20%" stop-color="#1E2E4A"/>
+              <stop offset="80%" stop-color="#283C60"/>
+              <stop offset="100%" stop-color="#0D1624"/>
+            </linearGradient>
+          </defs>
+          <rect width="220" height="200" fill="url(#lampGlow)"/>
+          
+          <g transform="translate(10, 130)">
+            <rect x="0" y="0" width="195" height="42" rx="4" fill="url(#book2)"/>
+            <rect x="6" y="2" width="6" height="38" fill="#FBBF24" opacity="0.6"/>
+            <text x="75" y="24" fill="#FBBF24" font-size="12" font-weight="700" font-family="'Plus Jakarta Sans', sans-serif" letter-spacing="0.5">Bigger Dreams</text>
+          </g>
+
+          <g transform="translate(15, 84)">
+            <rect x="0" y="0" width="180" height="40" rx="4" fill="url(#book1)"/>
+            <rect x="5" y="2" width="5" height="36" fill="#F59E0B" opacity="0.5"/>
+            <text x="65" y="24" fill="#FDE68A" font-size="12" font-weight="700" font-family="'Plus Jakarta Sans', sans-serif" letter-spacing="0.5">Better Words</text>
+          </g>
+
+          <path d="M30 78C60 76 90 70 105 60C120 70 150 76 180 78L175 84C145 82 120 78 105 70C90 78 65 82 35 84Z" fill="#FBBF24" opacity="0.8"/>
+        </svg>
+      </div>
+    </aside>
+
+    <!-- Center Content Area -->
+    <main class="center-content">
+
+      <!-- View 1: Dictionary & Word Lookup -->
+      <div id="dictionary-section">
+        <!-- Hero Search Section -->
+        <section class="hero-section">
+          <svg class="hero-art-sprout" viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="sproutGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#FBBF24" stop-opacity="0.4"/>
+                <stop offset="100%" stop-color="#FBBF24" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <circle cx="100" cy="70" r="60" fill="url(#sproutGlow)"/>
+            <path d="M40 120C65 120 85 110 100 95C115 110 135 120 160 120V126C135 126 115 116 100 105C85 116 65 126 40 126V120Z" fill="#FBBF24"/>
+            <path d="M100 95V40" stroke="#FDE68A" stroke-width="3" stroke-linecap="round"/>
+            <path d="M100 70C90 60 75 60 70 70C75 80 90 80 100 70Z" fill="#FBBF24"/>
+            <path d="M100 55C110 45 125 45 130 55C125 65 110 65 100 55Z" fill="#FDE68A"/>
+            <circle cx="100" cy="22" r="3" fill="#FFFBEB"/>
+          </svg>
+
+          <h2 class="hero-title">Discover <span class="gold-text">New Words</span></h2>
+          <p class="hero-subtitle">Your smart and simple dictionary</p>
+
+          <!-- Search Bar -->
+          <form class="search-bar-wrapper" id="search-form" onsubmit="event.preventDefault(); triggerSearch();">
+            <div class="search-icon-left">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <input 
+              type="text" 
+              id="word-search-input" 
+              class="search-input" 
+              placeholder="Search for a word..." 
+              autocomplete="off"
+              value=""
+              oninput="handleSearchInputChange(this.value)"
+            />
+            <button type="button" class="clear-search-btn" id="clear-btn" onclick="clearSearchInput()" title="Clear">✕</button>
+            <button type="submit" class="search-submit-btn" title="Search word">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </button>
+            <button type="button" class="voice-search-btn" id="mic-btn" onclick="startVoiceSearch()" title="Voice search">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </button>
+          </form>
+
+          <!-- Quick Suggestion Chips -->
+          <div class="try-chips-row">
+            <span class="try-label">Try:</span>
+            <button class="chip" onclick="loadWord('beautiful')">beautiful</button>
+            <button class="chip" onclick="loadWord('courage')">courage</button>
+            <button class="chip" onclick="loadWord('dream')">dream</button>
+            <button class="chip" onclick="loadWord('knowledge')">knowledge</button>
+            <button class="chip" onclick="loadWord('success')">success</button>
+          </div>
+        </section>
+
+        <!-- Main Word Result Card (Dynamically displayed when a word is searched) -->
+        <section class="word-result-card" id="word-card-container" style="display:none;">
+          
+          <div class="word-card-header">
+            <div>
+              <div class="word-title-group">
+                <h2 class="main-word-heading" id="display-word"></h2>
+                <button class="audio-speaker-btn" id="speaker-btn" onclick="speakCurrentWord()" title="Listen to pronunciation">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+                </button>
+              </div>
+              <div class="phonetic-text" id="display-phonetic"></div>
+              <div class="pos-badge" id="display-pos" style="display:none;"></div>
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+
+              <button class="favorite-toggle-btn" id="fav-btn" onclick="toggleFavoriteCurrentWord()">
+                <svg id="fav-star-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <span id="fav-btn-text">Add to Favorites</span>
+              </button>
+            </div>
+          </div>
+
+          <p class="primary-definition-text" id="display-definition"></p>
+
+          <!-- 3 Dynamic Feature Grid Cards -->
+          <div class="word-features-grid">
+            
+            <!-- Meaning Card -->
+            <div class="feature-card">
+              <div class="feature-card-header">
+                <div class="feature-card-icon" style="color: var(--gold-light);">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                </div>
+                <span class="feature-card-title title-meaning">Meaning</span>
+              </div>
+              <div class="feature-card-content" id="card-meaning-text"></div>
+              <div class="feature-card-arrow">›</div>
+            </div>
+
+            <!-- Synonyms Card -->
+            <div class="feature-card">
+              <div class="feature-card-header">
+                <div class="feature-card-icon" style="color: var(--emerald);">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+                </div>
+                <span class="feature-card-title title-synonyms">Synonyms</span>
+              </div>
+              <div class="feature-card-content" id="card-synonyms-container">
+                <div class="feature-tags-list" id="synonyms-tags-list"></div>
+              </div>
+              <div class="feature-card-arrow">›</div>
+            </div>
+
+            <!-- Antonyms Card -->
+            <div class="feature-card">
+              <div class="feature-card-header">
+                <div class="feature-card-icon" style="color: var(--rose);">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                </div>
+                <span class="feature-card-title title-antonyms">Antonyms</span>
+              </div>
+              <div class="feature-card-content" id="card-antonyms-container">
+                <div class="feature-tags-list" id="antonyms-tags-list"></div>
+              </div>
+              <div class="feature-card-arrow">›</div>
+            </div>
+
+          </div>
+
+          <!-- Example Sentence Card -->
+          <div class="example-sentence-card">
+            <div class="example-card-left">
+              <div class="example-icon-bubble">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <div>
+                <div class="example-label">Example Sentence</div>
+                <div class="example-text" id="display-example"></div>
+              </div>
+            </div>
+            <div class="example-card-arrow">›</div>
+          </div>
+
+          <!-- Bottom Actions Row -->
+          <div class="word-actions-row">
+            <button class="action-btn" onclick="speakCurrentWord()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              Listen
+            </button>
+            <button class="action-btn" onclick="copyWordDetails()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Copy
+            </button>
+            <button class="action-btn" onclick="shareWordDetails()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              Share
+            </button>
+          </div>
+
+        </section>
+      </div>
+
+      <!-- View 2: Interactive Vocabulary Quiz Studio -->
+      <div id="quiz-section">
+        <section class="quiz-card">
+          
+          <!-- Quiz Setup View -->
+          <div id="quiz-setup-view">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+              <div class="quiz-badge">Interactive Practice</div>
+              <h2 style="font-size:26px; font-weight:800; color:var(--text);">Vocabulary Quiz Studio</h2>
+            </div>
+            <p style="color:var(--text-secondary); margin-bottom:24px; font-size:14px;">
+              Master English definitions, synonyms, and antonyms with randomized multiple choice challenges.
+            </p>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;">
+              <div>
+                <label style="display:block; font-size:13px; font-weight:700; color:var(--text-secondary); margin-bottom:8px;">Category</label>
+                <select id="quiz-category-select" style="width:100%; padding:12px; border-radius:12px; background:var(--surface-elevated); color:var(--text); border:1px solid var(--surface-border-subtle); font-family:inherit;">
+                  <option value="all">🎯 Mixed Master Mode</option>
+                  <option value="definition">📖 Definitions</option>
+                  <option value="synonym">✨ Synonyms</option>
+                  <option value="antonym">⚡ Antonyms</option>
+                  <option value="saved">⭐ My Saved Words</option>
+                </select>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:13px; font-weight:700; color:var(--text-secondary); margin-bottom:8px;">Difficulty</label>
+                <select id="quiz-difficulty-select" style="width:100%; padding:12px; border-radius:12px; background:var(--surface-elevated); color:var(--text); border:1px solid var(--surface-border-subtle); font-family:inherit;">
+                  <option value="easy">🟢 Beginner (Essential)</option>
+                  <option value="medium" selected>🟡 Intermediate (Advanced)</option>
+                  <option value="hard">🔴 Master (Scholarly)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end;">
+              <button class="action-btn" style="background:var(--gold); color:#000; font-weight:800; padding:12px 32px;" onclick="startQuiz()">
+                Start Quiz Now 🚀
+              </button>
+            </div>
+          </div>
+
+          <!-- Active Question View -->
+          <div id="quiz-active-view" style="display:none;">
+            <div class="quiz-header-bar">
+              <div class="quiz-badge" id="quiz-q-type">Definition Mode</div>
+              <div class="quiz-progress-text" id="quiz-progress-label">Question 1 / 5</div>
+            </div>
+
+            <div class="quiz-question-prompt" id="quiz-q-text">
+              What is the definition of "candid"?
+            </div>
+
+            <div class="quiz-options-grid" id="quiz-options-container">
+              <!-- Rendered dynamically -->
+            </div>
+
+            <div class="quiz-explanation-box" id="quiz-explanation-box"></div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div style="font-size:14px; color:var(--text-secondary);">
+                Score: <strong id="quiz-live-score" style="color:var(--gold-light);">0</strong> / <span id="quiz-live-total">0</span>
+              </div>
+              <button class="action-btn" id="quiz-next-btn" style="background:var(--gold); color:#000; display:none;" onclick="nextQuizQuestion()">
+                Next Question ›
+              </button>
+            </div>
+          </div>
+
+          <!-- Quiz Results View -->
+          <div id="quiz-results-view" style="display:none; text-align:center; padding:20px 0;">
+            <div style="font-size:48px; margin-bottom:12px;">🏆</div>
+            <h3 style="font-size:28px; font-weight:800; color:var(--text); margin-bottom:8px;">Quiz Completed!</h3>
+            <p style="color:var(--text-secondary); margin-bottom:20px;">Great effort expanding your lexicon.</p>
+            
+            <div style="display:inline-block; padding:24px 40px; background:var(--surface-elevated); border-radius:20px; border:1px solid var(--surface-border-subtle); margin-bottom:24px;">
+              <div style="font-size:48px; font-weight:800; color:var(--gold-light);" id="quiz-final-pct">80%</div>
+              <div style="color:var(--text-secondary); font-size:14px;" id="quiz-final-score-text">4 out of 5 correct</div>
+            </div>
+
+            <div style="display:flex; justify-content:center; gap:12px;">
+              <button class="action-btn" onclick="showQuizSetup()">Try Another Quiz</button>
+              <button class="action-btn" style="background:var(--gold); color:#000;" onclick="showDictionaryView()">Back to Dictionary</button>
+            </div>
+          </div>
+
+        </section>
+      </div>
+
+
+    </main>
+
+    <!-- Right Sidebar Column -->
+    <aside class="right-sidebar">
+
+      <!-- Recent Searches Card -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-header">
+          <div class="sidebar-card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Recent Searches
+          </div>
+          <button class="sidebar-card-action" onclick="clearSearchHistory()">Clear All</button>
+        </div>
+
+        <div class="word-list" id="recent-searches-list">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Favorites Card -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-header">
+          <div class="sidebar-card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Favorites
+          </div>
+          <button class="sidebar-card-action" onclick="openFavoritesModal()">View All</button>
+        </div>
+
+        <div class="word-list" id="favorites-list">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Word of the Day Scenic Card -->
+      <div class="wotd-card">
+        <svg class="wotd-bg-art" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1E293B"/>
+              <stop offset="60%" stop-color="#7C2D12"/>
+              <stop offset="100%" stop-color="#0F172A"/>
+            </linearGradient>
+          </defs>
+          <rect width="300" height="200" fill="url(#skyGrad)"/>
+          <circle cx="230" cy="80" r="30" fill="#FBBF24" opacity="0.3"/>
+          <path d="M0 200L60 120L120 170L190 90L260 160L300 130V200H0Z" fill="#090D16" opacity="0.8"/>
+          <path d="M0 200L80 145L140 185L210 130L300 175V200H0Z" fill="#04060A"/>
+        </svg>
+
+        <div class="wotd-content">
+          <div class="wotd-header">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="2"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>
+            <span>Word of the Day</span>
+          </div>
+          <div class="wotd-word" id="wotd-word-title">serendipity</div>
+          <div class="wotd-pos" id="wotd-word-pos">(noun)</div>
+          <div class="wotd-def" id="wotd-word-def">The happy happenstance of finding something good without looking for it.</div>
+        </div>
+
+        <button class="wotd-arrow-btn" onclick="showDictionaryView(); loadWord(currentWotdWord);" title="Explore Word of the Day">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- History Modal Dialog -->
+  <div class="modal-overlay" id="history-modal" onclick="closeModalOnOutsideClick(event, 'history-modal')">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 style="font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 10px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Search History
+        </h3>
+        <button class="modal-close-btn" onclick="closeModal('history-modal')">✕</button>
+      </div>
+      <div class="word-list" id="modal-history-list" style="max-height: 380px; overflow-y: auto;"></div>
+      <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="action-btn" onclick="clearSearchHistory(); closeModal('history-modal');">Clear All</button>
+        <button class="action-btn" style="background: var(--gold); color: #000;" onclick="closeModal('history-modal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Favorites Modal Dialog -->
+  <div class="modal-overlay" id="favorites-modal" onclick="closeModalOnOutsideClick(event, 'favorites-modal')">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 style="font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 10px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Saved Favorites
+        </h3>
+        <button class="modal-close-btn" onclick="closeModal('favorites-modal')">✕</button>
+      </div>
+      <div class="word-list" id="modal-favorites-list" style="max-height: 380px; overflow-y: auto;"></div>
+      <div style="margin-top: 20px; display: flex; justify-content: flex-end;">
+        <button class="action-btn" style="background: var(--gold); color: #000;" onclick="closeModal('favorites-modal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile & Account Modal Dialog -->
+  <div class="modal-overlay" id="profile-modal" onclick="closeModalOnOutsideClick(event, 'profile-modal')">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 style="font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 10px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          LexiFind Profile
+        </h3>
+        <button class="modal-close-btn" onclick="closeModal('profile-modal')">✕</button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14px; color: var(--text-secondary);">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--gold-bg); border: 2px solid var(--gold); display: flex; align-items: center; justify-content: center; color: var(--gold-light); font-size: 22px; font-weight: 800;">
+            L
+          </div>
+          <div>
+            <div style="font-size: 16px; font-weight: 700; color: var(--text);">LexiFind Member</div>
+            <div style="font-size: 13px; color: var(--text-muted);">Active Learner</div>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px;">
+          <div style="background: var(--surface-elevated); padding: 14px; border-radius: 12px; text-align: center;">
+            <div style="font-size: 22px; font-weight: 800; color: var(--gold-light);" id="stat-searches-count">0</div>
+            <div style="font-size: 12px; color: var(--text-muted);">Words Looked Up</div>
+          </div>
+          <div style="background: var(--surface-elevated); padding: 14px; border-radius: 12px; text-align: center;">
+            <div style="font-size: 22px; font-weight: 800; color: var(--emerald);" id="stat-saved-count">0</div>
+            <div style="font-size: 12px; color: var(--text-muted);">Saved Favorites</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top: 24px; display: flex; gap: 10px; justify-content: flex-end;">
+        <button class="nav-logout-btn" id="modal-logout-btn" onclick="handleLogout(); closeModal('profile-modal');">Logout</button>
+        <button class="action-btn" style="background: var(--gold); color: #000;" onclick="closeModal('profile-modal')">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dedicated Authentication Modal (Login / Sign Up) -->
+  <div class="modal-overlay" id="auth-modal" style="display:none;" onclick="closeModalOnOutsideClick(event, 'auth-modal')">
+    <div class="auth-modal-content">
+      <button class="modal-close-btn" id="auth-modal-close-btn" onclick="closeModal('auth-modal')">✕</button>
+      
+      <!-- Tab switch between Login & Register -->
+      <div class="auth-tab-row">
+        <button class="auth-tab-btn active" id="tab-login-btn" onclick="switchAuthTab('login')">Sign In</button>
+        <button class="auth-tab-btn" id="tab-reg-btn" onclick="switchAuthTab('register')">Create Account</button>
+      </div>
+
+      <!-- Login Form View -->
+      <div id="auth-login-panel">
+        <h3 style="font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 6px;">Welcome to LexiFind</h3>
+        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">Please sign in to access your dictionary and start discovering words.</p>
+        
+        <form onsubmit="event.preventDefault(); submitLogin();">
+          <div class="auth-form-group">
+            <label class="auth-label">Email or Username</label>
+            <input type="text" id="login-identifier" class="auth-input" placeholder="e.g. vinay or user@example.com" required autocomplete="username" />
+          </div>
+          <div class="auth-form-group">
+            <label class="auth-label">Password</label>
+            <input type="password" id="login-password" class="auth-input" placeholder="••••••••" required autocomplete="current-password" />
+          </div>
+          <div class="auth-error" id="login-error-msg"></div>
+          <button type="submit" class="action-btn" style="width: 100%; padding: 12px; background: var(--gold); color: #000; font-weight: 800; font-size: 15px; border-radius: 12px; margin-top: 4px;">
+            Sign In 🚀
+          </button>
+
+          <div style="margin-top: 14px; text-align: center;">
+            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">— OR —</div>
+            <button type="button" class="action-btn" onclick="quickDemoLogin()" style="width: 100%; padding: 10px; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: var(--gold-light); font-weight: 700; border-radius: 12px;">
+              ⚡ One-Click Instant Login (Vinay)
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Register Form View -->
+      <div id="auth-reg-panel" style="display:none;">
+        <h3 style="font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 6px;">Create Account</h3>
+        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">Join LexiFind to build your vocabulary and track mastery.</p>
+        
+        <form onsubmit="event.preventDefault(); submitRegister();">
+          <div class="auth-form-group">
+            <label class="auth-label">Username</label>
+            <input type="text" id="reg-username" class="auth-input" placeholder="e.g. wordmaster" required autocomplete="username" />
+          </div>
+          <div class="auth-form-group">
+            <label class="auth-label">Email Address</label>
+            <input type="email" id="reg-email" class="auth-input" placeholder="user@example.com" required autocomplete="email" />
+          </div>
+          <div class="auth-form-group">
+            <label class="auth-label">Password</label>
+            <input type="password" id="reg-password" class="auth-input" placeholder="••••••••" required autocomplete="new-password" />
+          </div>
+          <div class="auth-error" id="reg-error-msg"></div>
+          <button type="submit" class="action-btn" style="width: 100%; padding: 12px; background: var(--gold); color: #000; font-weight: 800; font-size: 15px; border-radius: 12px; margin-top: 4px;">
+            Create Account ✨
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Core JavaScript Logic -->
+  <script>
+    let currentWordData = null;
+    let currentWotdWord = "serendipity";
+    let isCurrentWordSaved = false;
+    let currentUser = null;
+    let userId = 1;
+
+    // Quiz State
+    let quizQuestions = [];
+    let currentQuizIndex = 0;
+    let quizScore = 0;
+
+    // Initialize UI on load
+    document.addEventListener("DOMContentLoaded", () => {
+      const savedTheme = localStorage.getItem("lexifind_theme");
+      if (savedTheme === "light") {
+        document.body.classList.add("light");
+        updateThemeUI(true);
+      } else {
+        updateThemeUI(false);
+      }
+
+      // Check stored user session
+      initUserSession();
+
+      // Word of the Day: always safe to prefetch
+      fetchWordOfTheDay();
+
+      // Auth gate: hide only when a valid user session exists
+      if (currentUser) {
+        dismissAuthGate();
+        // DO NOT auto-search — leave search box EMPTY per requirements
+        refreshRecentSearches();
+        refreshFavorites();
+      }
+      // Otherwise the auth-gate div is visible by default (no display:none on it)
+    });
+
+    // Authentication Session Handling
+    function initUserSession() {
+      const stored = localStorage.getItem("lexifind_user");
+      if (stored) {
+        try {
+          currentUser = JSON.parse(stored);
+          userId = currentUser.id || 1;
+        } catch(e) {
+          currentUser = null;
+          userId = 1;
+        }
+      } else {
+        currentUser = null;
+      }
+      updateAuthUI();
+    }
+
+    function updateAuthUI() {
+      const loginBtn = document.getElementById("header-login-btn");
+      const logoutBtn = document.getElementById("header-logout-btn");
+      const modalLogoutBtn = document.getElementById("modal-logout-btn");
+      const userDisplay = document.querySelector("#profile-modal .modal-box div div div div");
+
+      if (currentUser && currentUser.username) {
+        if (loginBtn) loginBtn.style.display = "none";
+        if (logoutBtn) logoutBtn.style.display = "inline-flex";
+        if (modalLogoutBtn) modalLogoutBtn.style.display = "inline-flex";
+        if (userDisplay) userDisplay.textContent = currentUser.username;
+      } else {
+        if (loginBtn) loginBtn.style.display = "inline-flex";
+        if (logoutBtn) logoutBtn.style.display = "none";
+        if (modalLogoutBtn) modalLogoutBtn.style.display = "none";
+        if (userDisplay) userDisplay.textContent = "Guest";
+      }
+    }
+
+    function openAuthModal(tab = 'login', mandatory = false) {
+      switchAuthTab(tab);
+      const modal = document.getElementById("auth-modal");
+      const closeBtn = document.getElementById("auth-modal-close-btn");
+      if (closeBtn) {
+        closeBtn.style.display = mandatory ? "none" : "block";
+      }
+      modal.setAttribute("data-mandatory", mandatory ? "true" : "false");
+      modal.style.display = "flex";
+    }
+
+    function switchAuthTab(tab) {
+      const loginTab = document.getElementById("tab-login-btn");
+      const regTab = document.getElementById("tab-reg-btn");
+      const loginPanel = document.getElementById("auth-login-panel");
+      const regPanel = document.getElementById("auth-reg-panel");
+      const loginErr = document.getElementById("login-error-msg");
+      const regErr = document.getElementById("reg-error-msg");
+      if (loginErr) loginErr.textContent = "";
+      if (regErr) regErr.textContent = "";
+
+      if (tab === 'login') {
+        loginTab.classList.add("active");
+        regTab.classList.remove("active");
+        loginPanel.style.display = "block";
+        regPanel.style.display = "none";
+      } else {
+        regTab.classList.add("active");
+        loginTab.classList.remove("active");
+        regPanel.style.display = "block";
+        loginPanel.style.display = "none";
+      }
+    }
+
+    async function submitLogin() {
+      const identifier = document.getElementById("login-identifier").value.trim();
+      const password = document.getElementById("login-password").value;
+      const errorMsg = document.getElementById("login-error-msg");
+      errorMsg.textContent = "";
+
+      if (!identifier || !password) {
+        errorMsg.textContent = "Please enter both username/email and password.";
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: identifier, password: password })
+        });
+        const data = await res.json();
+        if (data.success && data.user) {
+          currentUser = data.user;
+          userId = data.user.id;
+          localStorage.setItem("lexifind_user", JSON.stringify(currentUser));
+          updateAuthUI();
+          closeModal("auth-modal");
+          showToast(`Welcome back, ${currentUser.username}! 👋`);
+          // DO NOT auto-search: leave search empty per requirements
+          refreshRecentSearches();
+          refreshFavorites();
+        } else {
+          errorMsg.textContent = data.message || "Invalid credentials.";
+        }
+      } catch(e) {
+        errorMsg.textContent = "Unable to connect to server.";
+      }
+    }
+
+    async function quickDemoLogin() {
+      currentUser = { id: 3, username: "Vinay", email: "vinaysanike@gmail.com" };
+      userId = 3;
+      localStorage.setItem("lexifind_user", JSON.stringify(currentUser));
+      updateAuthUI();
+      closeModal("auth-modal");
+      showToast(`Logged in as ${currentUser.username}! 👋`);
+      // DO NOT auto-search: leave search empty per requirements
+      refreshRecentSearches();
+      refreshFavorites();
+    }
+
+    async function submitRegister() {
+      const username = document.getElementById("reg-username").value.trim();
+      const email = document.getElementById("reg-email").value.trim();
+      const password = document.getElementById("reg-password").value;
+      const errorMsg = document.getElementById("reg-error-msg");
+      errorMsg.textContent = "";
+
+      if (!username || !email || !password) {
+        errorMsg.textContent = "All fields are required.";
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, email, password })
+        });
+        const data = await res.json();
+        if (data.success && data.user) {
+          currentUser = data.user;
+          userId = data.user.id;
+          localStorage.setItem("lexifind_user", JSON.stringify(currentUser));
+          updateAuthUI();
+          closeModal("auth-modal");
+          showToast(`Account created! Welcome, ${currentUser.username}! 🎉`);
+          // DO NOT auto-search: leave search empty per requirements
+          refreshRecentSearches();
+          refreshFavorites();
+        } else {
+          errorMsg.textContent = data.message || "Registration failed.";
+        }
+      } catch(e) {
+        errorMsg.textContent = "Unable to connect to server.";
+      }
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      userId = 1;
+      localStorage.removeItem("lexifind_user");
+      updateAuthUI();
+      closeModal("profile-modal");
+      showToast("You have been signed out.");
+      showAuthGate();
+    }
+
+    // =============================================
+    // AUTH GATE FUNCTIONS
+    // =============================================
+    function showAuthGate() {
+      const gate = document.getElementById("auth-gate");
+      if (gate) {
+        gate.style.display = "flex";
+        // Reset to login tab
+        gateTab('login');
+        document.getElementById("gate-identifier").value = "";
+        document.getElementById("gate-password").value = "";
+        document.getElementById("gate-login-err").textContent = "";
+      }
+    }
+
+    function dismissAuthGate() {
+      const gate = document.getElementById("auth-gate");
+      if (gate) gate.style.display = "none";
+    }
+
+    function gateTab(tab) {
+      const loginTab  = document.getElementById("gate-tab-login");
+      const regTab    = document.getElementById("gate-tab-reg");
+      const loginPanel = document.getElementById("gate-login-panel");
+      const regPanel   = document.getElementById("gate-reg-panel");
+      const loginErr   = document.getElementById("gate-login-err");
+      const regErr     = document.getElementById("gate-reg-err");
+      if (loginErr) loginErr.textContent = "";
+      if (regErr)   regErr.textContent   = "";
+      if (tab === 'login') {
+        loginTab.classList.add("active");   regTab.classList.remove("active");
+        loginPanel.style.display = "block"; regPanel.style.display = "none";
+      } else {
+        regTab.classList.add("active");    loginTab.classList.remove("active");
+        regPanel.style.display = "block"; loginPanel.style.display = "none";
+      }
+    }
+
+    async function gateLogin() {
+      const identifier = document.getElementById("gate-identifier").value.trim();
+      const password   = document.getElementById("gate-password").value;
+      const errEl      = document.getElementById("gate-login-err");
+      const btn        = document.getElementById("gate-login-btn");
+      errEl.textContent = "";
+      if (!identifier || !password) {
+        errEl.textContent = "Please enter your email/username and password."; return;
+      }
+      btn.textContent = "Signing in..."; btn.disabled = true;
+      try {
+        const res  = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: identifier, password })
+        });
+        const data = await res.json();
+        if (data.success && data.user) {
+          currentUser = data.user;
+          userId = data.user.id;
+          const rememberMe = document.getElementById("gate-remember")?.checked;
+          if (rememberMe) {
+            localStorage.setItem("lexifind_user", JSON.stringify(currentUser));
+          } else {
+            sessionStorage.setItem("lexifind_user", JSON.stringify(currentUser));
+            localStorage.setItem("lexifind_user", JSON.stringify(currentUser));
+          }
+          updateAuthUI();
+          dismissAuthGate();
+          showToast(`Welcome back, ${currentUser.username}! 👋`);
+          // Search box stays EMPTY — user will search manually
+          refreshRecentSearches();
+          refreshFavorites();
+        } else {
+          errEl.textContent = data.message || "Invalid credentials. Try again.";
+        }
+      } catch(e) {
+        errEl.textContent = "Cannot connect to server. Is it running?";
+      } finally {
+        btn.textContent = "LOGIN →"; btn.disabled = false;
+      }
+    }
+
+    async function gateRegister() {
+      const username = document.getElementById("gate-username").value.trim();
+      const email    = document.getElementById("gate-email").value.trim();
+      const password = document.getElementById("gate-reg-password").value;
+      const errEl    = document.getElementById("gate-reg-err");
+      const btn      = document.getElementById("gate-reg-btn");
+      errEl.textContent = "";
+      if (!username || !email || !password) {
+        errEl.textContent = "All fields are required."; return;
+      }
+      btn.textContent = "Creating account..."; btn.disabled = true;
+      try {
+        const res  = await fetch("/api/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, email, password })
+        });
+        const data = await res.json();
+        if (data.success && data.user) {
+          currentUser = data.user;
+          userId = data.user.id;
+          localStorage.setItem("lexifind_user", JSON.stringify(currentUser));
+          updateAuthUI();
+          dismissAuthGate();
+          showToast(`Account created! Welcome, ${currentUser.username}! 🎉`);
+          // Search box stays EMPTY — user will search manually
+          refreshRecentSearches();
+          refreshFavorites();
+        } else {
+          errEl.textContent = data.message || "Registration failed. Try a different username/email.";
+        }
+      } catch(e) {
+        errEl.textContent = "Cannot connect to server. Is it running?";
+      } finally {
+        btn.textContent = "CREATE ACCOUNT ✨"; btn.disabled = false;
+      }
+    }
+
+    function gateDemoLogin() {
+      currentUser = { id: 3, username: "Vinay", email: "vinaysanike@gmail.com" };
+      userId = 3;
+      localStorage.setItem("lexifind_user", JSON.stringify(currentUser));
+      updateAuthUI();
+      dismissAuthGate();
+      showToast("Logged in as Vinay! 👋 Welcome back!");
+      // Search box stays EMPTY — user will search manually
+      refreshRecentSearches();
+      refreshFavorites();
+    }
+
+    // Show/hide password helper for auth gate
+    function toggleGatePassword(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      if (input.type === "password") {
+        input.type = "text";
+        btn.innerHTML = "&#128064;"; // open eye
+      } else {
+        input.type = "password";
+        btn.innerHTML = "&#128065;"; // eye
+      }
+    }
+
+    // Theme switching
+    function toggleTheme() {
+      const isLight = document.body.classList.toggle("light");
+      localStorage.setItem("lexifind_theme", isLight ? "light" : "dark");
+      updateThemeUI(isLight);
+    }
+
+    function updateThemeUI(isLight) {
+      const sun = document.getElementById("sun-icon");
+      const moon = document.getElementById("moon-icon");
+      if (isLight) {
+        sun.classList.add("active-theme");
+        moon.classList.remove("active-theme");
+      } else {
+        moon.classList.add("active-theme");
+        sun.classList.remove("active-theme");
+      }
+    }
+
+    // View Switching (Dictionary / Quiz)
+    function showDictionaryView() {
+      document.getElementById("dictionary-section").style.display = "block";
+      document.getElementById("quiz-section").style.display = "none";
+      
+      document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".sidebar-item").forEach(s => s.classList.remove("active"));
+      document.getElementById("nav-home-btn").classList.add("active");
+      document.getElementById("side-home").classList.add("active");
+    }
+
+    function showQuizView() {
+      document.getElementById("dictionary-section").style.display = "none";
+      document.getElementById("quiz-section").style.display = "flex";
+      
+      document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".sidebar-item").forEach(s => s.classList.remove("active"));
+      document.getElementById("nav-quiz-btn").classList.add("active");
+      document.getElementById("side-quiz").classList.add("active");
+
+      showQuizSetup();
+    }
+
+    // Search Input handling
+    function handleSearchInputChange(val) {
+      const clearBtn = document.getElementById("clear-btn");
+      clearBtn.style.display = val.trim().length > 0 ? "flex" : "none";
+    }
+
+    function clearSearchInput() {
+      const input = document.getElementById("word-search-input");
+      input.value = "";
+      input.focus();
+      handleSearchInputChange("");
+    }
+
+    function triggerSearch() {
+      const input = document.getElementById("word-search-input");
+      const word = input.value.trim();
+      if (word) {
+        showDictionaryView();
+        loadWord(word);
+      }
+    }
+
+    // Load and render Word with dynamic state (no static placeholders)
+    async function loadWord(word) {
+      if (!word) return;
+      showDictionaryView();
+      const cleanWord = word.replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, '').trim().toLowerCase();
+      if (!cleanWord) return;
+      
+      const searchInput = document.getElementById("word-search-input");
+      searchInput.value = cleanWord;
+      handleSearchInputChange(cleanWord);
+
+      // Show word card container
+      const cardContainer = document.getElementById("word-card-container");
+      if (cardContainer) cardContainer.style.display = "block";
+
+      // Reset loading fields
+      document.getElementById("display-word").textContent = cleanWord;
+      document.getElementById("display-phonetic").textContent = "/loading.../";
+      const posBadge = document.getElementById("display-pos");
+      if (posBadge) {
+        posBadge.style.display = "inline-block";
+        posBadge.textContent = "searching";
+      }
+      document.getElementById("display-definition").textContent = "Looking up authoritative dictionary definitions & lexical context...";
+      document.getElementById("card-meaning-text").textContent = "Loading meaning...";
+      document.getElementById("synonyms-tags-list").innerHTML = '<span class="empty-note">Searching synonyms...</span>';
+      document.getElementById("antonyms-tags-list").innerHTML = '<span class="empty-note">Searching antonyms...</span>';
+      document.getElementById("display-example").textContent = "Searching contextual examples...";
+
+      try {
+        const response = await fetch(`/api/search?word=${encodeURIComponent(cleanWord)}&user_id=${userId}`);
+        const data = await response.json();
+
+        if (data.found && data.word) {
+          renderWord(data.word, data.is_saved);
+          refreshRecentSearches();
+        } else {
+          document.getElementById("display-word").textContent = cleanWord;
+          document.getElementById("display-phonetic").textContent = "";
+          if (posBadge) posBadge.style.display = "none";
+          document.getElementById("display-definition").textContent = data.message || `'${cleanWord}' not found in standard English dictionaries.`;
+          document.getElementById("card-meaning-text").textContent = "No additional meaning available.";
+          document.getElementById("synonyms-tags-list").innerHTML = '<span class="empty-note">No synonyms found</span>';
+          document.getElementById("antonyms-tags-list").innerHTML = '<span class="empty-note">No antonyms found</span>';
+          document.getElementById("display-example").textContent = `“Please verify the spelling of ${cleanWord}.”`;
+          
+          if (data.suggestions && data.suggestions.length > 0) {
+            showToast(`Word not found. Did you mean: ${data.suggestions.slice(0, 3).join(", ")}?`);
+          } else {
+            showToast(`'${cleanWord}' was not found in dictionary.`);
+          }
+        }
+      } catch (err) {
+        console.error("Lookup error:", err);
+        showToast("Error retrieving definition.");
+      }
+    }
+
+    function renderWord(info, isSaved) {
+      currentWordData = info;
+      isCurrentWordSaved = !!isSaved;
+
+      document.getElementById("display-word").textContent = info.word;
+      document.getElementById("display-phonetic").textContent = info.pronunciation || `/${info.word}/`;
+      const posBadge = document.getElementById("display-pos");
+      if (posBadge) {
+        posBadge.style.display = "inline-block";
+        posBadge.textContent = (info.part_of_speech || "word").toLowerCase();
+      }
+      
+      const definitions = info.definitions || [];
+      const primaryDef = (definitions.length > 0) ? definitions[0] : "Definition not available.";
+      document.getElementById("display-definition").textContent = primaryDef;
+
+      // 1. Meaning Card: Display secondary definition or rich detail for THIS word
+      const secondaryDef = (definitions.length > 1) 
+        ? definitions[1] 
+        : ((definitions.length > 0) ? `Primary sense: ${primaryDef}` : "Standard usage context.");
+      document.getElementById("card-meaning-text").textContent = secondaryDef;
+
+      // 2. Synonyms: Display ONLY synonyms for THIS word
+      const synContainer = document.getElementById("synonyms-tags-list");
+      synContainer.innerHTML = "";
+      const synonyms = (info.synonyms || []).filter(s => s.toLowerCase() !== info.word.toLowerCase());
+      if (synonyms.length > 0) {
+        synonyms.slice(0, 6).forEach(syn => {
+          const span = document.createElement("span");
+          span.className = "feature-mini-tag";
+          span.textContent = syn;
+          span.onclick = () => loadWord(syn);
+          synContainer.appendChild(span);
+        });
+      } else {
+        synContainer.innerHTML = '<span class="empty-note">No direct synonyms recorded.</span>';
+      }
+
+      // 3. Antonyms: Display ONLY antonyms for THIS word
+      const antContainer = document.getElementById("antonyms-tags-list");
+      antContainer.innerHTML = "";
+      const antonyms = (info.antonyms || []).filter(a => a.toLowerCase() !== info.word.toLowerCase());
+      if (antonyms.length > 0) {
+        antonyms.slice(0, 5).forEach(ant => {
+          const span = document.createElement("span");
+          span.className = "feature-mini-tag";
+          span.textContent = ant;
+          span.onclick = () => loadWord(ant);
+          antContainer.appendChild(span);
+        });
+      } else {
+        antContainer.innerHTML = '<span class="empty-note">No direct antonyms recorded.</span>';
+      }
+
+      // 4. Example Sentence: Display authentic example for THIS word
+      const examples = info.examples || [];
+      const exampleText = (examples.length > 0) 
+        ? `“${examples[0]}”` 
+        : `“The term '${info.word}' is frequently used in contemporary English.”`;
+      document.getElementById("display-example").textContent = exampleText;
+
+      // Update Bookmark state
+      updateFavBtnState(isCurrentWordSaved);
+    }
+
+    function updateFavBtnState(saved) {
+      const favBtn = document.getElementById("fav-btn");
+      const favText = document.getElementById("fav-btn-text");
+      const starIcon = document.getElementById("fav-star-icon");
+
+      if (saved) {
+        favBtn.classList.add("is-favorited");
+        favText.textContent = "Saved";
+        starIcon.setAttribute("fill", "#070A12");
+      } else {
+        favBtn.classList.remove("is-favorited");
+        favText.textContent = "Add to Favorites";
+        starIcon.setAttribute("fill", "none");
+      }
+    }
+
+    async function toggleFavoriteCurrentWord() {
+      if (!currentWordData) return;
+      try {
+        const res = await fetch("/api/toggle_save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: userId, word: currentWordData.word })
+        });
+        const data = await res.json();
+        isCurrentWordSaved = data.saved;
+        updateFavBtnState(isCurrentWordSaved);
+        refreshFavorites();
+        showToast(isCurrentWordSaved ? `Added "${currentWordData.word}" to Favorites` : `Removed "${currentWordData.word}" from Favorites`);
+      } catch (e) {
+        console.error("Toggle error:", e);
+      }
+    }
+
+    // Audio Voice Pronunciation using Web Speech API
+    function speakCurrentWord() {
+      if (!currentWordData || !currentWordData.word) return;
+      const word = currentWordData.word;
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(word);
+        utterance.lang = "en-US";
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+        showToast(`Pronouncing "${word}" 🔊`);
+      } else {
+        showToast("Audio synthesis not supported.");
+      }
+    }
+
+    // Voice Search with strict punctuation stripping and automatic search trigger
+    function startVoiceSearch() {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRec) {
+        showToast("Voice recognition not supported in this browser.");
+        return;
+      }
+      const recognition = new SpeechRec();
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+
+      const micBtn = document.getElementById("mic-btn");
+      micBtn.classList.add("listening");
+      showToast("Listening... Speak a word now 🎤");
+
+      recognition.onresult = (event) => {
+        micBtn.classList.remove("listening");
+        let rawTranscript = event.results[0][0].transcript || "";
+        // Clean speech text: remove trailing periods, commas, question marks, exclamation marks, etc.
+        let cleanWord = rawTranscript.replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, '').trim().toLowerCase();
+        
+        if (cleanWord) {
+          const searchInput = document.getElementById("word-search-input");
+          if (searchInput) searchInput.value = cleanWord;
+          showToast(`Heard: "${cleanWord}" — searching... 🔍`);
+          // Automatically trigger the dictionary search immediately
+          loadWord(cleanWord);
+        } else {
+          showToast("No clear speech detected. Please try again.");
+        }
+      };
+      recognition.onerror = () => { micBtn.classList.remove("listening"); };
+      recognition.onend = () => { micBtn.classList.remove("listening"); };
+      recognition.start();
+    }
+
+    // Copy to clipboard
+    function copyWordDetails() {
+      if (!currentWordData) return;
+      const text = `${currentWordData.word} ${currentWordData.pronunciation || ""}\n(${currentWordData.part_of_speech || ""})\nDefinition: ${currentWordData.definitions ? currentWordData.definitions[0] : ""}`;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("Word & definition copied to clipboard! 📋");
+      }).catch(() => {
+        showToast("Copied to clipboard!");
+      });
+    }
+
+    // Share word
+    function shareWordDetails() {
+      if (!currentWordData) return;
+      if (navigator.share) {
+        navigator.share({
+          title: `LexiFind: ${currentWordData.word}`,
+          text: `Definition of "${currentWordData.word}": ${currentWordData.definitions ? currentWordData.definitions[0] : ""}`,
+          url: window.location.href
+        }).catch(() => {});
+      } else {
+        copyWordDetails();
+      }
+    }
+
+    // Recent Searches & Favorites updates
+    async function refreshRecentSearches() {
+      try {
+        const res = await fetch(`/api/history?user_id=${userId}`);
+        const list = await res.json();
+        
+        const container = document.getElementById("recent-searches-list");
+        const modalContainer = document.getElementById("modal-history-list");
+        document.getElementById("stat-searches-count").textContent = list.length;
+
+        if (list.length === 0) {
+          container.innerHTML = '<div style="color:var(--text-muted); font-size:12px; padding:8px 12px;">No recent searches.</div>';
+          if (modalContainer) modalContainer.innerHTML = '<div style="color:var(--text-muted); padding:16px;">No history recorded.</div>';
+          return;
+        }
+
+        let html = "";
+        let modalHtml = "";
+        list.slice(0, 6).forEach(item => {
+          html += `
+            <div class="word-list-item" onclick="loadWord('${item.word}')">
+              <div class="word-item-left">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span>${item.word}</span>
+              </div>
+              <span class="word-item-arrow">›</span>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+
+        list.forEach(item => {
+          modalHtml += `
+            <div class="word-list-item" onclick="loadWord('${item.word}'); closeModal('history-modal');">
+              <div class="word-item-left">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span>${item.word}</span>
+              </div>
+              <span style="font-size:11px; color:var(--text-muted);">${item.searched_at || ""}</span>
+            </div>
+          `;
+        });
+        if (modalContainer) modalContainer.innerHTML = modalHtml;
+
+      } catch (e) {
+        console.error("History fetch error:", e);
+      }
+    }
+
+    async function clearSearchHistory() {
+      try {
+        await fetch(`/api/clear_history?user_id=${userId}`, { method: "POST" });
+        refreshRecentSearches();
+        showToast("Recent searches cleared.");
+      } catch (e) {
+        console.error("Clear error:", e);
+      }
+    }
+
+    async function refreshFavorites() {
+      try {
+        const res = await fetch(`/api/saved?user_id=${userId}`);
+        const list = await res.json();
+        
+        const container = document.getElementById("favorites-list");
+        const modalContainer = document.getElementById("modal-favorites-list");
+        document.getElementById("stat-saved-count").textContent = list.length;
+
+        if (list.length === 0) {
+          container.innerHTML = '<div style="color:var(--text-muted); font-size:12px; padding:8px 12px;">No favorites saved yet.</div>';
+          if (modalContainer) modalContainer.innerHTML = '<div style="color:var(--text-muted); padding:16px;">No favorites bookmarked.</div>';
+          return;
+        }
+
+        let html = "";
+        let modalHtml = "";
+        list.slice(0, 5).forEach(item => {
+          html += `
+            <div class="word-list-item" onclick="loadWord('${item.word}')">
+              <div class="word-item-left">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span>${item.word}</span>
+              </div>
+              <span class="word-item-arrow">›</span>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+
+        list.forEach(item => {
+          modalHtml += `
+            <div class="word-list-item" onclick="loadWord('${item.word}'); closeModal('favorites-modal');">
+              <div class="word-item-left">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <span style="font-weight:600; color:var(--text);">${item.word}</span>
+              </div>
+              <span style="font-size:11px; color:var(--text-muted);">${item.saved_at || ""}</span>
+            </div>
+          `;
+        });
+        if (modalContainer) modalContainer.innerHTML = modalHtml;
+
+      } catch (e) {
+        console.error("Favorites error:", e);
+      }
+    }
+
+    // Word of the day
+    async function fetchWordOfTheDay() {
+      try {
+        const res = await fetch("/api/word_of_the_day");
+        const data = await res.json();
+        if (data && data.word) {
+          currentWotdWord = data.word;
+          document.getElementById("wotd-word-title").textContent = data.word;
+          document.getElementById("wotd-word-pos").textContent = `(${data.pos.toLowerCase()})`;
+          document.getElementById("wotd-word-def").textContent = data.def;
+        }
+      } catch (e) {
+        console.error("WOTD error:", e);
+      }
+    }
+
+    // --- QUIZ ENGINE IMPLEMENTATION ---
+    function showQuizSetup() {
+      document.getElementById("quiz-setup-view").style.display = "block";
+      document.getElementById("quiz-active-view").style.display = "none";
+      document.getElementById("quiz-results-view").style.display = "none";
+    }
+
+    async function startQuiz() {
+      const cat = document.getElementById("quiz-category-select").value;
+      const diff = document.getElementById("quiz-difficulty-select").value;
+
+      try {
+        const res = await fetch(`/api/quiz/questions?user_id=${userId}&category=${cat}&difficulty=${diff}&count=5`);
+        quizQuestions = await res.json();
+        if (!quizQuestions || quizQuestions.length === 0) {
+          showToast("Not enough words in this category to generate quiz.");
+          return;
+        }
+        currentQuizIndex = 0;
+        quizScore = 0;
+
+        document.getElementById("quiz-setup-view").style.display = "none";
+        document.getElementById("quiz-active-view").style.display = "block";
+        document.getElementById("quiz-results-view").style.display = "none";
+
+        renderQuizQuestion();
+      } catch (e) {
+        console.error("Quiz start error:", e);
+        showToast("Error generating quiz questions.");
+      }
+    }
+
+    function renderQuizQuestion() {
+      const q     = quizQuestions[currentQuizIndex];
+      const total = quizQuestions.length;
+
+      // Update header info
+      document.getElementById("quiz-q-type").textContent         = (q.type || "vocabulary").toUpperCase() + " PRACTICE";
+      document.getElementById("quiz-progress-label").textContent = `Question ${currentQuizIndex + 1} of ${total}`;
+      document.getElementById("quiz-q-text").textContent         = q.question;
+
+      // Reset live score display
+      document.getElementById("quiz-live-score").textContent = quizScore;
+      document.getElementById("quiz-live-total").textContent = total;   // show /total not index
+
+      // Clear and hide explanation + next button
+      const explBox = document.getElementById("quiz-explanation-box");
+      explBox.innerHTML = "";
+      explBox.style.display = "none";
+      const nextBtn = document.getElementById("quiz-next-btn");
+      nextBtn.style.display = "none";
+      nextBtn.textContent = "Next Question ›";
+
+      // Render option buttons fresh
+      const optContainer = document.getElementById("quiz-options-container");
+      optContainer.innerHTML = "";
+
+      const letters = ["A", "B", "C", "D"];
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "quiz-option-btn";
+        btn.innerHTML = `<span class="quiz-opt-letter">${letters[idx]}</span> <span>${opt}</span>`;
+        btn.onclick   = () => selectQuizAnswer(idx, q.correct_index, q.explanation || "");
+        optContainer.appendChild(btn);
+      });
+    }
+
+    function selectQuizAnswer(selectedIdx, correctIdx, explanation) {
+      // Disable ALL option buttons in the container (not global query)
+      const optContainer = document.getElementById("quiz-options-container");
+      const buttons = optContainer.querySelectorAll(".quiz-option-btn");
+      buttons.forEach((btn, idx) => {
+        btn.disabled = true;
+        if (idx === correctIdx) {
+          btn.classList.add("correct");
+        } else if (idx === selectedIdx && idx !== correctIdx) {
+          btn.classList.add("wrong");
+        }
+      });
+
+      const isCorrect = (selectedIdx === correctIdx);
+      if (isCorrect) {
+        quizScore++;
+        showToast("Correct! +1 Point 🎉");
+      } else {
+        showToast("Incorrect! See explanation below.");
+      }
+
+      // Update live score
+      document.getElementById("quiz-live-score").textContent = quizScore;
+      document.getElementById("quiz-live-total").textContent = quizQuestions.length;
+
+      // Show explanation
+      const explBox = document.getElementById("quiz-explanation-box");
+      explBox.innerHTML = `<strong>${isCorrect ? '✅ Well done!' : '💡 Explanation:'}</strong> ${explanation || 'No explanation available.'}`;
+      explBox.style.display = "block";
+
+      // Show next / finish button
+      const nextBtn = document.getElementById("quiz-next-btn");
+      nextBtn.style.display = "inline-flex";
+      nextBtn.textContent = (currentQuizIndex + 1 >= quizQuestions.length)
+        ? "View Final Results 🏆"
+        : "Next Question ›";
+    }
+
+    async function nextQuizQuestion() {
+      currentQuizIndex++;
+      if (currentQuizIndex < quizQuestions.length) {
+        renderQuizQuestion();
+      } else {
+        // Finished Quiz
+        document.getElementById("quiz-active-view").style.display = "none";
+        document.getElementById("quiz-results-view").style.display = "block";
+
+        const total = quizQuestions.length;
+        const pct = Math.round((quizScore / total) * 100);
+        document.getElementById("quiz-final-pct").textContent = `${pct}%`;
+        document.getElementById("quiz-final-score-text").textContent = `${quizScore} out of ${total} correct`;
+
+        // Submit quiz result to backend
+        try {
+          const cat = document.getElementById("quiz-category-select").value;
+          const diff = document.getElementById("quiz-difficulty-select").value;
+          await fetch("/api/quiz/submit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              user_id: userId,
+              category: cat,
+              difficulty: diff,
+              score: quizScore,
+              total_questions: total
+            })
+          });
+        } catch (e) {
+          console.error("Submit error:", e);
+        }
+      }
+    }
+
+    // Modal controls
+    function openHistoryModal() {
+      refreshRecentSearches();
+      document.getElementById("history-modal").style.display = "flex";
+    }
+
+    function openFavoritesModal() {
+      refreshFavorites();
+      document.getElementById("favorites-modal").style.display = "flex";
+    }
+
+    function openProfileModal() {
+      document.getElementById("profile-modal").style.display = "flex";
+    }
+
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (id === 'auth-modal' && modal && modal.getAttribute("data-mandatory") === "true") {
+        return; // Login is mandatory
+      }
+      if (modal) modal.style.display = "none";
+    }
+
+    function closeModalOnOutsideClick(e, id) {
+      if (e.target.id === id) {
+        const modal = document.getElementById(id);
+        if (id === 'auth-modal' && modal && modal.getAttribute("data-mandatory") === "true") {
+          return; // Do not dismiss mandatory login modal
+        }
+        modal.style.display = "none";
+      }
+    }
+
+
+
+    // Toast alerts
+    function showToast(msg) {
+      const container = document.getElementById("toast-container");
+      const toast = document.createElement("div");
+      toast.className = "toast";
+      toast.textContent = msg;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(10px)";
+        toast.style.transition = "all 0.3s";
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

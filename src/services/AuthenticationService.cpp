@@ -11,8 +11,6 @@
 AuthenticationService::AuthenticationService(QObject* parent)
     : QObject(parent), m_currentUserId(-1)
 {
-    DatabaseManager db;
-    db.initializeDatabase();
 }
 
 AuthenticationService::~AuthenticationService() = default;

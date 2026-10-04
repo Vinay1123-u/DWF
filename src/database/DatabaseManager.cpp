@@ -9,7 +9,8 @@
 #include <QVariant>
 
 DatabaseManager::DatabaseManager()
-    : m_dbPath(QDir::currentPath() + QDir::separator() + "database" + QDir::separator() + "dictionary.db")
+    : m_dbPath(QDir::currentPath() + QDir::separator() + "database" + QDir::separator() + "dictionary.db"),
+      m_connectionName(QString("dictionary_connection_%1").arg(reinterpret_cast<quintptr>(this), 0, 16))
 {
     QDir dir(QDir::currentPath() + QDir::separator() + "database");
     if (!dir.exists()) {
@@ -24,7 +25,7 @@ DatabaseManager::~DatabaseManager()
 
 bool DatabaseManager::initializeDatabase()
 {
-    m_database = QSqlDatabase::addDatabase("QSQLITE", "dictionary_connection");
+    m_database = QSqlDatabase::addDatabase("QSQLITE", m_connectionName);
     m_database.setDatabaseName(m_dbPath);
 
     if (!m_database.open()) {
@@ -93,7 +94,7 @@ void DatabaseManager::closeDatabase()
         m_database.close();
     }
     m_database = QSqlDatabase();
-    QSqlDatabase::removeDatabase("dictionary_connection");
+    QSqlDatabase::removeDatabase(m_connectionName);
 }
 
 bool DatabaseManager::isOpen() const

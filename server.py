@@ -28,6 +28,24 @@ def get_env_value(key_name):
                     return line[len(key_name) + 1:].strip()
     return ""
 
+def set_env_value(key_name, val):
+    clean_val = val.strip() if val else ""
+    os.environ[key_name] = clean_val
+    lines = []
+    found = False
+    if os.path.exists(ENV_PATH):
+        with open(ENV_PATH, "r", encoding="utf-8") as f:
+            for line in f:
+                if line.strip().startswith(f"{key_name}="):
+                    lines.append(f"{key_name}={clean_val}\n")
+                    found = True
+                else:
+                    lines.append(line)
+    if not found:
+        lines.append(f"{key_name}={clean_val}\n")
+    with open(ENV_PATH, "w", encoding="utf-8") as f:
+        f.writelines(lines)
+
 def init_db():
     os.makedirs(DB_DIR, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
@@ -154,11 +172,15 @@ def lookup_dictionary_word(word):
     Only returns valid words present in standard English dictionaries.
     Returns found=False and spelling suggestions for non-existent or typo words.
     """
-    clean_word = word.strip().lower()
+    if not word:
+        return {"found": False, "word": "", "message": "Please enter a word to search."}
+    
+    # Strip any punctuation, symbols, whitespace commonly appended by speech recognition (e.g. "wait.", "hello,")
+    clean_word = re.sub(r"^[^a-zA-Z]+|[^a-zA-Z]+$", "", word.strip()).strip().lower()
     if not clean_word or not re.match(r"^[a-zA-Z\- ]+$", clean_word) or not is_plausible_word(clean_word):
         suggestions = []
         try:
-            sug_url = f"https://api.datamuse.com/sug?s={urllib.parse.quote(clean_word)}"
+            sug_url = f"https://api.datamuse.com/sug?s={urllib.parse.quote(clean_word or word.strip())}"
             req = urllib.request.Request(sug_url, headers={"User-Agent": "DictionaryWordFinder/2.0"})
             with urllib.request.urlopen(req, timeout=4) as r:
                 sugs = json.loads(r.read().decode("utf-8"))
@@ -201,19 +223,60 @@ def lookup_dictionary_word(word):
         "n": "Noun", "v": "Verb", "adj": "Adjective", "adv": "Adverb", "u": "Interjection"
     }
 
-    # 2. Query Datamuse Lexicon with IPA transcription & definitions
+    # 2. Query Free Dictionary API (Comprehensive definitions, synonyms, antonyms, examples, phonetics)
+    try:
+        f_url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{urllib.parse.quote(clean_word)}"
+        req = urllib.request.Request(f_url, headers={"User-Agent": "DictionaryWordFinder/2.0 (Mozilla/5.0)"})
+        with urllib.request.urlopen(req, timeout=4) as resp:
+            f_data = json.loads(resp.read().decode("utf-8"))
+            if isinstance(f_data, list) and len(f_data) > 0:
+                entry = f_data[0]
+                if "phonetic" in entry and entry["phonetic"]:
+                    pronunciation = entry["phonetic"]
+                elif "phonetics" in entry:
+                    for ph in entry["phonetics"]:
+                        if ph.get("text"):
+                            pronunciation = ph["text"]
+                            break
+                for m in entry.get("meanings", []):
+                    pos_name = m.get("partOfSpeech", "")
+                    if pos_name and (not part_of_speech or part_of_speech == "Noun"):
+                        part_of_speech = pos_name.capitalize()
+                    for def_obj in m.get("definitions", []):
+                        d_text = def_obj.get("definition", "").strip()
+                        if d_text and d_text not in definitions:
+                            definitions.append(d_text)
+                        ex_text = def_obj.get("example", "").strip()
+                        if ex_text and ex_text not in examples:
+                            examples.append(ex_text)
+                        for syn in def_obj.get("synonyms", []):
+                            if syn.lower() not in [s.lower() for s in synonyms] and syn.lower() != clean_word:
+                                synonyms.append(syn)
+                        for ant in def_obj.get("antonyms", []):
+                            if ant.lower() not in [a.lower() for a in antonyms] and ant.lower() != clean_word:
+                                antonyms.append(ant)
+                    for syn in m.get("synonyms", []):
+                        if syn.lower() not in [s.lower() for s in synonyms] and syn.lower() != clean_word:
+                            synonyms.append(syn)
+                    for ant in m.get("antonyms", []):
+                        if ant.lower() not in [a.lower() for a in antonyms] and ant.lower() != clean_word:
+                            antonyms.append(ant)
+    except Exception:
+        pass
+
+    # 3. Query Datamuse Lexicon with IPA transcription & definitions
     try:
         url = f"https://api.datamuse.com/words?sp={urllib.parse.quote(clean_word)}&qe=sp&md=dpfr&ipa=1&max=1"
         req = urllib.request.Request(url, headers={"User-Agent": "DictionaryWordFinder/2.0 (Mozilla/5.0)"})
-        with urllib.request.urlopen(req, timeout=5) as resp:
+        with urllib.request.urlopen(req, timeout=4) as resp:
             data = json.loads(resp.read().decode("utf-8"))
             if data and data[0].get("word", "").lower() == clean_word:
                 entry = data[0]
                 tags = entry.get("tags", [])
                 for t in tags:
-                    if t.startswith("ipa_pron:"):
+                    if t.startswith("ipa_pron:") and not pronunciation:
                         pronunciation = "/" + t[9:].strip() + "/"
-                    elif t in pos_map:
+                    elif t in pos_map and not part_of_speech:
                         part_of_speech = pos_map[t]
 
                 raw_defs = entry.get("defs", [])
@@ -230,7 +293,7 @@ def lookup_dictionary_word(word):
                         if d_clean and d_clean not in definitions:
                             definitions.append(d_clean)
     except Exception as e:
-        print("Datamuse lookup error:", e)
+        pass
 
     # 3. Query Wiktionary for rich context, grammar & real examples
     try:
@@ -454,6 +517,8 @@ def get_word_of_the_day():
     combined = VOCABULARY_BANK["easy"] + VOCABULARY_BANK["medium"] + VOCABULARY_BANK["hard"]
     item = combined[day_num % len(combined)]
     return item
+
+
 
 HTML_PAGE = """<!DOCTYPE html>
 <html lang="en">
@@ -2124,7 +2189,12 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
             try:
-                self.wfile.write(HTML_PAGE.encode("utf-8"))
+                html_file_path = os.path.join(os.path.dirname(__file__), "index.html")
+                if os.path.exists(html_file_path):
+                    with open(html_file_path, "rb") as f:
+                        self.wfile.write(f.read())
+                else:
+                    self.wfile.write(HTML_PAGE.encode("utf-8"))
             except (BrokenPipeError, ConnectionAbortedError):
                 pass
             return
@@ -2289,16 +2359,16 @@ class RequestHandler(BaseHTTPRequestHandler):
             return
 
         if path == "/api/login":
-            email = data.get("email", "").strip()
+            identifier = (data.get("email") or data.get("username") or "").strip()
             password = data.get("password", "")
             p_hash = hash_password(password)
-            cur.execute("SELECT id, username, email FROM users WHERE email=? AND password_hash=?", (email, p_hash))
+            cur.execute("SELECT id, username, email FROM users WHERE (email=? OR username=?) AND password_hash=?", (identifier, identifier, p_hash))
             row = cur.fetchone()
             conn.close()
             if row:
                 self._send_json({"success": True, "user": {"id": row[0], "username": row[1], "email": row[2]}})
             else:
-                self._send_json({"success": False, "message": "Invalid email or password."})
+                self._send_json({"success": False, "message": "Invalid username/email or password."})
             return
 
         if path == "/api/toggle_save":

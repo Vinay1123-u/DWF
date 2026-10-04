@@ -41,4 +41,5 @@ public:
 private:
     QSqlDatabase m_database;
     QString m_dbPath;
+    QString m_connectionName;
 };
